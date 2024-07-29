@@ -1,48 +1,39 @@
-import type { MetaFunction } from "@remix-run/node";
+import type {
+	ActionFunction,
+	ActionFunctionArgs,
+	MetaFunction,
+} from "@remix-run/node";
+import { PlateEditor } from "~/components/plate-editor.client";
+import { ClientOnly } from "remix-utils/client-only";
+import { Form } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
+	return [
+		{ title: "New Remix App" },
+		{ name: "description", content: "Welcome to Remix!" },
+	];
+};
+
+export const action: ActionFunction = async ({
+	request,
+}: ActionFunctionArgs) => {
+	const formData = await request.formData();
+
+	const editorContent = formData.get("editorContent");
+	console.log("Editor Content:", editorContent);
+
+	return null;
 };
 
 export default function Index() {
-  return (
-    <div className="font-sans p-4">
-      <h1 className="text-3xl">Welcome to Remix</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/quickstart"
-            rel="noreferrer"
-          >
-            5m Quick Start
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/tutorial"
-            rel="noreferrer"
-          >
-            30m Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/docs"
-            rel="noreferrer"
-          >
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
+	return (
+		<div className="font-sans p-4 space-y-2">
+			<Form method="post">
+				<ClientOnly fallback={<p>Loading Editor</p>}>
+					{() => <PlateEditor />}
+				</ClientOnly>
+				<button type="submit">Submit</button>
+			</Form>
+		</div>
+	);
 }
